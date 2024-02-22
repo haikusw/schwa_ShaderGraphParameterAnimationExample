@@ -33,3 +33,5 @@ Accessing the model entities and the materials upon them is a bit of a pain, but
 ### Animating Parameters in Swift
 
 Unfortunately, RealityKit's (rather convoluted) explicit animation functionality does not support animating shader parameters. However, you can write your own timer-based animation loop to animate the parameters yourself. The code implements a SwiftUI `TimelineView` to animate the parameters of every frame (via RealityView's update handler). This example is straightforward, but you may want to use a more sophisticated animation implementation for an actual project.
+
+* `FB13645019`: RealityKit's animation system cannot animate ShaderGraphMaterial custom parameters
