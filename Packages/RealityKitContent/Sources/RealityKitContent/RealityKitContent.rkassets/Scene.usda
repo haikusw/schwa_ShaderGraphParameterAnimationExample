@@ -1,0 +1,157 @@
+#usda 1.0
+(
+    defaultPrim = "Root"
+    metersPerUnit = 1
+    upAxis = "Y"
+)
+
+def Xform "Root"
+{
+    reorder nameChildren = ["Sphere", "Cropped_Material"]
+    rel material:binding = None (
+        bindMaterialAs = "weakerThanDescendants"
+    )
+
+    def Sphere "Sphere" (
+        active = true
+        prepend apiSchemas = ["MaterialBindingAPI"]
+    )
+    {
+        reorder nameChildren = ["Collider", "InputTarget", "Cropped_Material"]
+        rel material:binding = </Root/Sphere/Cropped_Material> (
+            bindMaterialAs = "weakerThanDescendants"
+        )
+        double radius = 0.1
+        quatf xformOp:orient = (1, 0, 0, 0)
+        float3 xformOp:scale = (1, 1, 1)
+        float3 xformOp:translate = (0, 0, 0)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+
+        def RealityKitComponent "Collider"
+        {
+            uint group = 1
+            uniform token info:id = "RealityKit.Collider"
+            uint mask = 4294967295
+            token type = "Default"
+
+            def RealityKitStruct "Shape"
+            {
+                float3 extent = (0.2, 0.2, 0.2)
+                float radius = 0.1
+                token shapeType = "Sphere"
+            }
+        }
+
+        def RealityKitComponent "InputTarget"
+        {
+            uniform token info:id = "RealityKit.InputTarget"
+        }
+
+        def Material "Cropped_Material"
+        {
+            float inputs:MAX_Y = 0.6 (
+                customData = {
+                    dictionary realitykit = {
+                        float2 positionInSubgraph = (313.25, 177.75)
+                        float2 sizeInSubgraph = (113, 53)
+                        int stackingOrderInSubgraph = 418
+                    }
+                }
+            )
+            float inputs:MIN_Y = 0.4 (
+                customData = {
+                    dictionary realitykit = {
+                        float2 positionInSubgraph = (500.5, 314.25)
+                        float2 sizeInSubgraph = (108.5, 53)
+                        int stackingOrderInSubgraph = 418
+                    }
+                }
+            )
+            token outputs:mtlx:surface.connect = </Root/Sphere/Cropped_Material/UnlitSurface.outputs:out>
+            token outputs:realitykit:vertex
+            token outputs:surface.connect = </Root/Sphere/Cropped_Material/DefaultSurfaceShader.outputs:surface>
+            string[] ui:nodegraph:realitykit:node:attributesShowingChildren = ["outputs:mtlx:surface"]
+            float2 ui:nodegraph:realitykit:subgraphOutputs:pos = (1133.75, 143.875)
+            float2 ui:nodegraph:realitykit:subgraphOutputs:size = (181.5, 99)
+            int ui:nodegraph:realitykit:subgraphOutputs:stackingOrder = 421
+
+            def Shader "DefaultSurfaceShader" (
+                active = false
+            )
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (1, 1, 1)
+                float inputs:roughness = 0.75
+                token outputs:surface
+            }
+
+            def Shader "Ifgreater"
+            {
+                uniform token info:id = "ND_ifgreater_float"
+                float inputs:in1 = 1
+                float inputs:in1.connect = </Root/Sphere/Cropped_Material/Swizzle_1.outputs:out>
+                float inputs:in2
+                float inputs:value1.connect = </Root/Sphere/Cropped_Material.inputs:MAX_Y>
+                float inputs:value2 = 0.5
+                float inputs:value2.connect = </Root/Sphere/Cropped_Material/Swizzle_1.outputs:out>
+                float outputs:out
+                float2 ui:nodegraph:node:pos = (500.5, 81.5)
+                float2 ui:nodegraph:node:size = (109, 163)
+                int ui:nodegraph:node:stackingOrder = 418
+                string[] ui:nodegraph:realitykit:node:attributesShowingChildren = ["inputs:value2", "outputs:out"]
+            }
+
+            def Shader "Texcoord"
+            {
+                uniform token info:id = "ND_texcoord_vector2"
+                int inputs:index
+                float2 outputs:out
+                float2 ui:nodegraph:node:pos = (90.25, 38.25)
+                float2 ui:nodegraph:node:size = (180.5, 53)
+                int ui:nodegraph:node:stackingOrder = 418
+            }
+
+            def Shader "Swizzle_1"
+            {
+                uniform token info:id = "ND_swizzle_vector2_float"
+                string inputs:channels = "y"
+                float2 inputs:in.connect = </Root/Sphere/Cropped_Material/Texcoord.outputs:out>
+                float outputs:out
+                float2 ui:nodegraph:node:pos = (313.25, 38.25)
+                float2 ui:nodegraph:node:size = (145.5, 53)
+                int ui:nodegraph:node:stackingOrder = 418
+            }
+
+            def Shader "Ifgreater_1"
+            {
+                uniform token info:id = "ND_ifgreater_float"
+                float inputs:in1 = 1
+                float inputs:in2
+                float inputs:value1.connect = </Root/Sphere/Cropped_Material/Ifgreater.outputs:out>
+                float inputs:value2.connect = </Root/Sphere/Cropped_Material.inputs:MIN_Y>
+                float outputs:out
+                float2 ui:nodegraph:node:pos = (671.75, 143.875)
+                float2 ui:nodegraph:node:size = (113.5, 163)
+                int ui:nodegraph:node:stackingOrder = 418
+            }
+
+            def Shader "UnlitSurface"
+            {
+                uniform token info:id = "ND_realitykit_unlit_surfaceshader"
+                bool inputs:applyPostProcessToneMap
+                color3f inputs:color = (1, 0.0056030466, 0.9255902) (
+                    colorSpace = "srgb_displayp3"
+                )
+                bool inputs:hasPremultipliedAlpha
+                float inputs:opacity.connect = </Root/Sphere/Cropped_Material/Ifgreater_1.outputs:out>
+                float inputs:opacityThreshold
+                token outputs:out
+                float2 ui:nodegraph:node:pos = (885.75, 143.875)
+                float2 ui:nodegraph:node:size = (194.5, 181)
+                int ui:nodegraph:node:stackingOrder = 429
+                string[] ui:nodegraph:realitykit:node:attributesShowingChildren = ["inputs:color"]
+            }
+        }
+    }
+}
+

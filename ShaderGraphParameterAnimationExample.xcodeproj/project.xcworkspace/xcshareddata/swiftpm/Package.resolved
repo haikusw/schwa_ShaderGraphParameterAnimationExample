@@ -1,0 +1,14 @@
+{
+  "pins" : [
+    {
+      "identity" : "realitykitsupport",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/schwa/RealityKitSupport",
+      "state" : {
+        "branch" : "main",
+        "revision" : "f3b8ff90803475abc5c65613659922bc2ca0b6e1"
+      }
+    }
+  ],
+  "version" : 2
+}
